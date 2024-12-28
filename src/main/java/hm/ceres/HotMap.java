@@ -6,7 +6,6 @@ import hm.ceres.command.ModeMap;
 import hm.ceres.command.commands.CreateImageCommand;
 import hm.ceres.listener.PlayerListener;
 import hm.ceres.yaml.ChuckDataFiles;
-import hm.ceres.yaml.ChunkDataFile;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -63,6 +62,12 @@ public final class HotMap extends JavaPlugin {
                 }
             }
         }.runTaskTimerAsynchronously(this, 0L, 40L);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                chuckDataFiles.saveData();
+            }
+        }.runTaskTimerAsynchronously(this, 0L, 20L*60*20);
     }
 
     private void register(@NotNull BaseTabCommand command) {
@@ -93,16 +98,16 @@ public final class HotMap extends JavaPlugin {
                 for (int z = 0 ; z < HotMap.MAP[x].length ; z++){
                     ChunkData data = MAP[x][z];
                     if (data != null){
-                        int i;
+                        double i;
                         switch (mode){
                             case PLAYERS -> i = data.getActivityPlayer();
                             case BREAK_BLOCKS -> i = data.getBreakBlock();
                             case PLACE_BLOCKS -> i = data.getPlaceBlock();
                             default -> i = 0;
                         }
-                        i = Math.min(i, 255);
-                        Color c = new Color(i, i, i);
-                        image.setRGB(x,z, c.getRGB());
+                        i/=300;
+                        i = Math.min(i, 1);
+                        image.setRGB(x,z, interpolateColor(i).getRGB());
                     }
                 }
             }
@@ -137,8 +142,17 @@ public final class HotMap extends JavaPlugin {
         });
     }
 
-
-
+    // Función para interpolar colores
+    private static Color interpolateColor(double value) {
+        Gradient gradient = new Gradient();
+        gradient.addGradient(new Color(0, 0, 0), 2)
+                .addGradient(new Color(0, 0, 100), 2)
+                .addGradient(new Color(0, 100, 0), 2)
+                .addGradient(new Color(160, 160, 0), 2)
+                .addGradient(new Color(200, 0, 0), 2)
+                .addGradient(new Color(255, 255, 255), 1);
+        return gradient.getColor(value);
+    }
 
     @Override
     public void onDisable() {
