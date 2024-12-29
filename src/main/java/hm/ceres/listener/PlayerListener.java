@@ -25,5 +25,10 @@ public class PlayerListener implements Listener {
         if (data != null) {
             data.addBreakBlock();
         }
-    }
+    }/*
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void death(PlayerDeathEvent e) {
+        if (!HotMap.running) return;
+    }*/
 }

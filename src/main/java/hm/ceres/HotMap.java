@@ -2,10 +2,10 @@ package hm.ceres;
 
 import hm.ceres.command.BaseTabCommand;
 import hm.ceres.command.CommandHandler;
-import hm.ceres.command.ModeMap;
 import hm.ceres.command.commands.CreateImageCommand;
 import hm.ceres.listener.PlayerListener;
 import hm.ceres.yaml.ChuckDataFiles;
+import hm.ceres.yaml.ConfigFile;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -29,12 +29,13 @@ import java.util.Objects;
 public final class HotMap extends JavaPlugin {
     @Getter
     private static HotMap instance;
-    public static final int WIDTH = 1000;
-    public static final int HEIGHT = 1000;
-    public static final ChunkData[][] MAP = new ChunkData[WIDTH][HEIGHT];
+    public static int width = 1000;
+    public static int height = 1000;
+    public static final ChunkData[][] MAP = new ChunkData[width][height];
     private static CommandHandler commandHandler;
     private static ChuckDataFiles chuckDataFiles;
     public static boolean running = true;
+    public static ConfigFile config;
 
     @Override
     public void onLoad() {
@@ -48,6 +49,7 @@ public final class HotMap extends JavaPlugin {
         chuckDataFiles = new ChuckDataFiles();
         chuckDataFiles.loadData();
         register(new PlayerListener());
+        config = new ConfigFile();
 
         Bukkit.getLogger().info("Hot Map is running");
         new BukkitRunnable() {
@@ -70,6 +72,12 @@ public final class HotMap extends JavaPlugin {
         }.runTaskTimerAsynchronously(this, 0L, 20L*60*20);
     }
 
+    @Override
+    public void reloadConfig() {
+        config.reloadConfig();
+        config.loadData();
+    }
+
     private void register(@NotNull BaseTabCommand command) {
         commandHandler.getCommands().add(command);
         PluginCommand pluginCommand = this.getCommand(command.getName());
@@ -87,13 +95,13 @@ public final class HotMap extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener , this);
     }
 
-    public static void CreateImage(ModeMap mode){
+    public static void CreateImage(ModeMap mode, ModeColor color){
         try {
-            BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics g = image.getGraphics();
 
             g.setColor(Color.BLACK);
-            g.fillRect(0, 0, WIDTH, HEIGHT);
+            g.fillRect(0, 0, width, height);
             for (int x = 0 ; x < HotMap.MAP.length ; x++){
                 for (int z = 0 ; z < HotMap.MAP[x].length ; z++){
                     ChunkData data = MAP[x][z];
@@ -107,7 +115,7 @@ public final class HotMap extends JavaPlugin {
                         }
                         i/=300;
                         i = Math.min(i, 1);
-                        image.setRGB(x,z, interpolateColor(i).getRGB());
+                        image.setRGB(x,z, interpolateColor(i, color).getRGB());
                     }
                 }
             }
@@ -127,10 +135,10 @@ public final class HotMap extends JavaPlugin {
 
     @Nullable
     public static ChunkData getChunkData(int xR, int zR) {
-        int x = xR + HotMap.WIDTH/2;
-        int z = zR + HotMap.HEIGHT/2;
+        int x = xR + HotMap.width /2;
+        int z = zR + HotMap.height /2;
         ChunkData data;
-        if (x > 0 && z > 0 && x < HotMap.WIDTH && z < HotMap.HEIGHT){
+        if (x > 0 && z > 0 && x < HotMap.width && z < HotMap.height){
             data = HotMap.MAP[x][z];
         }else {
             return null;
@@ -143,15 +151,24 @@ public final class HotMap extends JavaPlugin {
     }
 
     // Función para interpolar colores
-    private static Color interpolateColor(double value) {
-        Gradient gradient = new Gradient();
-        gradient.addGradient(new Color(0, 0, 0), 2)
-                .addGradient(new Color(0, 0, 100), 2)
-                .addGradient(new Color(0, 100, 0), 2)
-                .addGradient(new Color(160, 160, 0), 2)
-                .addGradient(new Color(200, 0, 0), 2)
-                .addGradient(new Color(255, 255, 255), 1);
-        return gradient.getColor(value);
+    private static Color interpolateColor(double value,@NotNull ModeColor modeColor) {
+        switch (modeColor){
+            case HOT_COLOR -> {
+                Gradient gradient = new Gradient();
+                gradient.addGradient(new Color(0, 0, 0), 2)
+                        .addGradient(new Color(0, 0, 100), 2)
+                        .addGradient(new Color(0, 100, 0), 2)
+                        .addGradient(new Color(200, 200, 0), 2)
+                        .addGradient(new Color(200, 0, 0), 2)
+                        .addGradient(new Color(255, 255, 255), 1);
+                return gradient.getColor(value);
+            }
+            case MONOCHROME -> {
+                int i = (int) Math.round(value);
+                return new Color(i, i, i);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + modeColor);
+        }
     }
 
     @Override

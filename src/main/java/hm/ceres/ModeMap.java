@@ -1,4 +1,4 @@
-package hm.ceres.command;
+package hm.ceres;
 
 public enum ModeMap {
     PLAYERS,
