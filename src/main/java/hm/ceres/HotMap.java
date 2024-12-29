@@ -25,8 +25,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public final class HotMap extends JavaPlugin {
+
     @Getter
     private static HotMap instance;
     public static int width = 1000;
@@ -36,6 +39,10 @@ public final class HotMap extends JavaPlugin {
     private static ChuckDataFiles chuckDataFiles;
     public static boolean running = true;
     public static ConfigFile config;
+    private Thread workerThread;
+    private static final BlockingQueue<Runnable> TASK_QUEUE = new LinkedBlockingQueue<>();
+
+
 
     @Override
     public void onLoad() {
@@ -50,7 +57,9 @@ public final class HotMap extends JavaPlugin {
         chuckDataFiles.loadData();
         register(new PlayerListener());
         config = new ConfigFile();
-
+        workerThread = new Thread(this::processQueue);
+        workerThread.setName("HotMap Worker");
+        workerThread.start();
         Bukkit.getLogger().info("Hot Map is running");
         new BukkitRunnable() {
             @Override
@@ -70,6 +79,12 @@ public final class HotMap extends JavaPlugin {
                 chuckDataFiles.saveData();
             }
         }.runTaskTimerAsynchronously(this, 0L, 20L*60*20);
+    }
+
+    @Override
+    public void onDisable() {
+        workerThread.interrupt();
+        chuckDataFiles.saveData();
     }
 
     @Override
@@ -171,8 +186,21 @@ public final class HotMap extends JavaPlugin {
         }
     }
 
-    @Override
-    public void onDisable() {
-        chuckDataFiles.saveData();
+    public void enqueueTaskAsynchronously(Runnable task) {
+        if (!TASK_QUEUE.offer(task)){
+            getLogger().severe("Error al añadir la tarea");
+        }
+    }
+
+    private void processQueue() {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                // Toma una tarea de la cola y la ejecuta
+                Runnable task = TASK_QUEUE.take();
+                task.run();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Si es interrumpido, detenemos el hilo
+        }
     }
 }

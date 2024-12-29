@@ -4,7 +4,6 @@ import hm.ceres.HotMap;
 import hm.ceres.ModeColor;
 import hm.ceres.command.BaseTabCommand;
 import hm.ceres.ModeMap;
-import org.bukkit.block.data.type.Comparator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -21,16 +20,14 @@ public class CreateImageCommand extends BaseTabCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         switch (args[0].toLowerCase()){
-            case "create" -> new BukkitRunnable() {
-                public void run() {
-                    try {
-                        HotMap.CreateImage(ModeMap.valueOf(args[1].toUpperCase()), ModeColor.valueOf(args[2].toUpperCase()));
-                        sender.sendMessage("Fue creado con exitosamente");
-                    }catch (Exception e){
-                        sender.sendMessage("Error con los argumentos");
-                    }
+            case "create" -> new HotMap().enqueueTaskAsynchronously(() -> {
+                try {
+                    HotMap.CreateImage(ModeMap.valueOf(args[1].toUpperCase()), ModeColor.valueOf(args[2].toUpperCase()));
+                    sender.sendMessage("Fue creado con exitosamente");
+                }catch (Exception e){
+                    sender.sendMessage("Error con los argumentos");
                 }
-            }.runTaskAsynchronously(HotMap.getInstance());
+            });
             case "stop" -> {
                 if (!HotMap.running){
                     sender.sendMessage("Ya estaba detenido");
@@ -50,6 +47,7 @@ public class CreateImageCommand extends BaseTabCommand {
             case "reload" -> {
                 HotMap.config.reloadConfig();
                 HotMap.config.loadData();
+                sender.sendMessage("Configuración recargada");
             }
             default -> sender.sendMessage("Error con los argumentos");
         }
