@@ -8,13 +8,13 @@ public class ChuckDataFiles extends FilesYams {
     }
 
     public void saveData(){
-        for (int x = 0 ; x < HotMap.MAP.length ; x++){
-            for (int z = 0 ; z < HotMap.MAP[x].length ; z++){
-                if (HotMap.MAP[x][z] != null){
+        for (int x = 0 ; x < HotMap.matrixMap.length ; x++){
+            for (int z = 0 ; z < HotMap.matrixMap[x].length ; z++){
+                if (HotMap.matrixMap[x][z] != null){
                     int xR = x - HotMap.width /2;
                     int zR = z - HotMap.height /2;
-                    FileYaml fileYaml = getConfigFile(xR + "." + zR, true);
-                    fileYaml.saveData();
+                    ChunkDataFile fy = (ChunkDataFile) getConfigFile(xR/100 + "." + zR/100, true);
+                    fy.saveData(xR%100, zR%100);
                 }
             }
         }

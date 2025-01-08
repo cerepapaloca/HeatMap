@@ -20,14 +20,32 @@ public class CreateImageCommand extends BaseTabCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         switch (args[0].toLowerCase()){
-            case "create" -> new HotMap().enqueueTaskAsynchronously(() -> {
-                try {
-                    HotMap.CreateImage(ModeMap.valueOf(args[1].toUpperCase()), ModeColor.valueOf(args[2].toUpperCase()));
-                    sender.sendMessage("Fue creado con exitosamente");
-                }catch (Exception e){
-                    sender.sendMessage("Error con los argumentos");
+            case "create" -> new BukkitRunnable() {
+                @Override
+                public void run() {
+                    ModeMap modeMap;
+                    ModeColor modeColor;
+                    try {
+                        modeMap = ModeMap.valueOf(args[1].toUpperCase());
+                    }catch (Exception e){
+                        sender.sendMessage("modo del mapa invalido");
+                        return;
+                    }
+                    try {
+                        modeColor = ModeColor.valueOf(args[2].toUpperCase());
+                    }catch (Exception e){
+                        sender.sendMessage("modo del color invalido");
+                        return;
+                    }
+
+                    try {
+                        HotMap.CreateImage(modeMap, modeColor);
+                        sender.sendMessage("Fue creado con exitosamente");
+                    }catch (Exception e){
+                        throw new RuntimeException(e);
+                    }
                 }
-            });
+            }.runTaskAsynchronously(HotMap.getInstance());
             case "stop" -> {
                 if (!HotMap.running){
                     sender.sendMessage("Ya estaba detenido");
@@ -49,6 +67,10 @@ public class CreateImageCommand extends BaseTabCommand {
                 HotMap.config.loadData();
                 sender.sendMessage("Configuración recargada");
             }
+            case "save" -> {
+                HotMap.getChuckDataFiles().saveData();
+                sender.sendMessage("Datos guardados");
+            }
             default -> sender.sendMessage("Error con los argumentos");
         }
 
@@ -58,10 +80,10 @@ public class CreateImageCommand extends BaseTabCommand {
     public List<String> onTab(CommandSender sender, String[] args) {
         switch (args.length) {
             case 1 -> {
-                return listTab(args[0], List.of("create", "stop", "start", "reload"));
+                return listTab(args[0], List.of("create", "stop", "start", "reload", "save"));
             }
             case 2 -> {
-                if (args[0].equalsIgnoreCase("create")) {
+                if (args[0].toLowerCase().equals("create")) {
                     return listTab(args[1], enumsToStrings(ModeMap.values(), true));
                 }
             }

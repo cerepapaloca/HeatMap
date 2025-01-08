@@ -32,11 +32,12 @@ public final class HotMap extends JavaPlugin {
 
     @Getter
     private static HotMap instance;
-    public static int width = 1000;
-    public static int height = 1000;
-    public static final ChunkData[][] MAP = new ChunkData[width][height];
+    public static int width;
+    public static int height;
+    public static ChunkData[][] matrixMap;
     private static CommandHandler commandHandler;
-    private static ChuckDataFiles chuckDataFiles;
+    @Getter
+    public static ChuckDataFiles chuckDataFiles;
     public static boolean running = true;
     public static ConfigFile config;
     private Thread workerThread;
@@ -51,16 +52,16 @@ public final class HotMap extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        config = new ConfigFile();
+        matrixMap = new ChunkData[width][height];
         commandHandler = new CommandHandler();
         register(new CreateImageCommand());
         chuckDataFiles = new ChuckDataFiles();
         chuckDataFiles.loadData();
         register(new PlayerListener());
-        config = new ConfigFile();
         workerThread = new Thread(this::processQueue);
-        workerThread.setName("HotMap Worker");
+        workerThread.setName("HotMap");
         workerThread.start();
-        Bukkit.getLogger().info("Hot Map is running");
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -78,7 +79,7 @@ public final class HotMap extends JavaPlugin {
             public void run() {
                 chuckDataFiles.saveData();
             }
-        }.runTaskTimerAsynchronously(this, 0L, 20L*60*20);
+        }.runTaskTimerAsynchronously(this, 20L*60*5L, 20L*60*5);
     }
 
     @Override
@@ -117,20 +118,20 @@ public final class HotMap extends JavaPlugin {
 
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, width, height);
-            for (int x = 0 ; x < HotMap.MAP.length ; x++){
-                for (int z = 0 ; z < HotMap.MAP[x].length ; z++){
-                    ChunkData data = MAP[x][z];
-                    if (data != null){
+            for (int x = 0; x < HotMap.matrixMap.length ; x++){
+                for (int z = 0; z < HotMap.matrixMap[x].length ; z++){
+                    ChunkData data = matrixMap[x][z];
+                    if (data != null) {
                         double i;
-                        switch (mode){
+                        switch (mode) {
                             case PLAYERS -> i = data.getActivityPlayer();
                             case BREAK_BLOCKS -> i = data.getBreakBlock();
                             case PLACE_BLOCKS -> i = data.getPlaceBlock();
                             default -> i = 0;
                         }
-                        i/=300;
+                        i /= 300;
                         i = Math.min(i, 1);
-                        image.setRGB(x,z, interpolateColor(i, color).getRGB());
+                        if (x < width && z < height) image.setRGB(x, z, interpolateColor(i, color).getRGB());
                     }
                 }
             }
@@ -154,13 +155,13 @@ public final class HotMap extends JavaPlugin {
         int z = zR + HotMap.height /2;
         ChunkData data;
         if (x > 0 && z > 0 && x < HotMap.width && z < HotMap.height){
-            data = HotMap.MAP[x][z];
+            data = HotMap.matrixMap[x][z];
         }else {
             return null;
         }
         return Objects.requireNonNullElseGet(data, () -> {
             ChunkData chunkData = new ChunkData(xR, zR);
-            HotMap.MAP[x][z] = chunkData;
+            HotMap.matrixMap[x][z] = chunkData;
             return chunkData;
         });
     }
@@ -171,9 +172,9 @@ public final class HotMap extends JavaPlugin {
             case HOT_COLOR -> {
                 Gradient gradient = new Gradient();
                 gradient.addGradient(new Color(0, 0, 0), 2)
-                        .addGradient(new Color(0, 0, 100), 2)
-                        .addGradient(new Color(0, 100, 0), 2)
-                        .addGradient(new Color(200, 200, 0), 2)
+                        .addGradient(new Color(0, 0, 160), 2)
+                        .addGradient(new Color(0, 160, 0), 2)
+                        .addGradient(new Color(220, 220, 0), 2)
                         .addGradient(new Color(200, 0, 0), 2)
                         .addGradient(new Color(255, 255, 255), 1);
                 return gradient.getColor(value);
