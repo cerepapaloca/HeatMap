@@ -1,8 +1,7 @@
 package hm.ceres.yaml;
 
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.util.HashSet;
@@ -35,7 +34,7 @@ public abstract class FilesYams {
     public void createFolder(){
         File folder;
         try {
-            folder = new File(HotMap.getInstance().getDataFolder() + File.separator + folderName);
+            folder = new File(HeatMap.getInstance().getDataFolder() + File.separator + folderName);
             if(!folder.exists()){
                 folder.mkdirs();
             }
@@ -51,7 +50,7 @@ public abstract class FilesYams {
     }
 
     public void registerConfigFiles(){
-        String path = HotMap.getInstance().getDataFolder() + File.separator + folderName;
+        String path = HeatMap.getInstance().getDataFolder() + File.separator + folderName;
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {

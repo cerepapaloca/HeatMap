@@ -1,6 +1,6 @@
 package hm.ceres.yaml;
 
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 
 public class ChuckDataFiles extends FilesYams {
     public ChuckDataFiles() {
@@ -8,11 +8,11 @@ public class ChuckDataFiles extends FilesYams {
     }
 
     public void saveData(){
-        for (int x = 0 ; x < HotMap.matrixMap.length ; x++){
-            for (int z = 0 ; z < HotMap.matrixMap[x].length ; z++){
-                if (HotMap.matrixMap[x][z] != null){
-                    int xR = x - HotMap.width /2;
-                    int zR = z - HotMap.height /2;
+        for (int x = 0; x < HeatMap.matrixMap.length ; x++){
+            for (int z = 0; z < HeatMap.matrixMap[x].length ; z++){
+                if (HeatMap.matrixMap[x][z] != null){
+                    int xR = x - HeatMap.width /2;
+                    int zR = z - HeatMap.height /2;
                     ChunkDataFile fy = (ChunkDataFile) getConfigFile(xR/100 + "." + zR/100, true);
                     fy.saveData(xR%100, zR%100);
                 }

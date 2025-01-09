@@ -1,6 +1,6 @@
 package hm.ceres.command.commands;
 
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 import hm.ceres.ModeColor;
 import hm.ceres.command.BaseTabCommand;
 import hm.ceres.ModeMap;
@@ -39,36 +39,36 @@ public class CreateImageCommand extends BaseTabCommand {
                     }
 
                     try {
-                        HotMap.CreateImage(modeMap, modeColor);
+                        HeatMap.CreateImage(modeMap, modeColor);
                         sender.sendMessage("Fue creado con exitosamente");
                     }catch (Exception e){
                         throw new RuntimeException(e);
                     }
                 }
-            }.runTaskAsynchronously(HotMap.getInstance());
+            }.runTaskAsynchronously(HeatMap.getInstance());
             case "stop" -> {
-                if (!HotMap.running){
+                if (!HeatMap.running){
                     sender.sendMessage("Ya estaba detenido");
                 }else {
                     sender.sendMessage("Se detuvo");
-                    HotMap.running = false;
+                    HeatMap.running = false;
                 }
             }
             case "start" -> {
-                if (HotMap.running){
+                if (HeatMap.running){
                     sender.sendMessage("Ya estaba corriendo");
                 }else {
                     sender.sendMessage("Comenzó a correr");
-                    HotMap.running = true;
+                    HeatMap.running = true;
                 }
             }
             case "reload" -> {
-                HotMap.config.reloadConfig();
-                HotMap.config.loadData();
+                HeatMap.config.reloadConfig();
+                HeatMap.config.loadData();
                 sender.sendMessage("Configuración recargada");
             }
             case "save" -> {
-                HotMap.getChuckDataFiles().saveData();
+                HeatMap.getChuckDataFiles().saveData();
                 sender.sendMessage("Datos guardados");
             }
             default -> sender.sendMessage("Error con los argumentos");

@@ -1,6 +1,6 @@
 package hm.ceres.yaml;
 
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 
 public class ConfigFile extends FileYaml {
     public ConfigFile() {
@@ -10,14 +10,14 @@ public class ConfigFile extends FileYaml {
     @Override
     public void loadData() {
         loadConfig();
-        HotMap.height = fileYaml.getInt("height");
-        HotMap.width = fileYaml.getInt("width");
+        HeatMap.height = fileYaml.getInt("height");
+        HeatMap.width = fileYaml.getInt("width");
     }
 
     @Override
     public void saveData() {
-        fileYaml.set("height", HotMap.height);
-        fileYaml.set("width", HotMap.width);
+        fileYaml.set("height", HeatMap.height);
+        fileYaml.set("width", HeatMap.width);
         saveConfig();
     }
 }

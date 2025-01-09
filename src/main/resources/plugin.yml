@@ -1,6 +1,6 @@
-name: HotMap
+name: HeatMap
 version: '1.2'
-main: hm.ceres.HotMap
+main: hm.ceres.HeatMap
 api-version: '1.21'
 prefix: HM
 load: STARTUP

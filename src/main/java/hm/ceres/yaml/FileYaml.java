@@ -1,8 +1,7 @@
 package hm.ceres.yaml;
 
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -43,7 +42,7 @@ public abstract class FileYaml {
     }
 
     private void copyDefaultConfig() {
-        File dataFolder = HotMap.getInstance().getDataFolder();
+        File dataFolder = HeatMap.getInstance().getDataFolder();
 
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
@@ -60,7 +59,7 @@ public abstract class FileYaml {
         file = new File(targetFolder, fileName);
 
         if (!file.exists()) {
-            try (InputStream inputStream = HotMap.getInstance().getResource(fileName);
+            try (InputStream inputStream = HeatMap.getInstance().getResource(fileName);
                  OutputStream outputStream = new FileOutputStream(file)) {
 
                 if (inputStream == null) {
@@ -112,9 +111,9 @@ public abstract class FileYaml {
 
         if (fileYaml == null) {
             if(folderName != null){
-                file = new File(HotMap.getInstance().getDataFolder() + File.separator + folderName, fileName);
+                file = new File(HeatMap.getInstance().getDataFolder() + File.separator + folderName, fileName);
             }else{
-                file = new File(HotMap.getInstance().getDataFolder(), fileName);
+                file = new File(HeatMap.getInstance().getDataFolder(), fileName);
             }
         }
 

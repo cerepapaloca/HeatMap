@@ -28,10 +28,10 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public final class HotMap extends JavaPlugin {
+public final class HeatMap extends JavaPlugin {
 
     @Getter
-    private static HotMap instance;
+    private static HeatMap instance;
     public static int width;
     public static int height;
     public static ChunkData[][] matrixMap;
@@ -118,8 +118,8 @@ public final class HotMap extends JavaPlugin {
 
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, width, height);
-            for (int x = 0; x < HotMap.matrixMap.length ; x++){
-                for (int z = 0; z < HotMap.matrixMap[x].length ; z++){
+            for (int x = 0; x < HeatMap.matrixMap.length ; x++){
+                for (int z = 0; z < HeatMap.matrixMap[x].length ; z++){
                     ChunkData data = matrixMap[x][z];
                     if (data != null) {
                         double i;
@@ -151,17 +151,17 @@ public final class HotMap extends JavaPlugin {
 
     @Nullable
     public static ChunkData getChunkData(int xR, int zR) {
-        int x = xR + HotMap.width /2;
-        int z = zR + HotMap.height /2;
+        int x = xR + HeatMap.width /2;
+        int z = zR + HeatMap.height /2;
         ChunkData data;
-        if (x > 0 && z > 0 && x < HotMap.width && z < HotMap.height){
-            data = HotMap.matrixMap[x][z];
+        if (x > 0 && z > 0 && x < HeatMap.width && z < HeatMap.height){
+            data = HeatMap.matrixMap[x][z];
         }else {
             return null;
         }
         return Objects.requireNonNullElseGet(data, () -> {
             ChunkData chunkData = new ChunkData(xR, zR);
-            HotMap.matrixMap[x][z] = chunkData;
+            HeatMap.matrixMap[x][z] = chunkData;
             return chunkData;
         });
     }

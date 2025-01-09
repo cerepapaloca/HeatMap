@@ -1,7 +1,7 @@
 package hm.ceres.listener;
 
 import hm.ceres.ChunkData;
-import hm.ceres.HotMap;
+import hm.ceres.HeatMap;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,8 +11,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void placeBLock(BlockPlaceEvent e) {
-        if (!HotMap.running) return;
-        ChunkData data = HotMap.getChunkData(e.getBlock().getLocation());
+        if (!HeatMap.running) return;
+        ChunkData data = HeatMap.getChunkData(e.getBlock().getLocation());
         if (data != null) {
             data.addPlaceBlock();
         }
@@ -20,8 +20,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void breakBlock(BlockBreakEvent e) {
-        if (!HotMap.running) return;
-        ChunkData data = HotMap.getChunkData(e.getBlock().getLocation());
+        if (!HeatMap.running) return;
+        ChunkData data = HeatMap.getChunkData(e.getBlock().getLocation());
         if (data != null) {
             data.addBreakBlock();
         }
