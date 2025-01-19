@@ -29,7 +29,6 @@ public abstract class FileYaml {
             loadConfig(); // Carga los datos en memoria
             loadData(); // Aplica los datos
         }
-
     }
 
     public String getPath(){

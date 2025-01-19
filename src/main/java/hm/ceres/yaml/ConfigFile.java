@@ -1,6 +1,7 @@
 package hm.ceres.yaml;
 
 import hm.ceres.HeatMap;
+import org.bukkit.Bukkit;
 
 public class ConfigFile extends FileYaml {
     public ConfigFile() {
@@ -9,15 +10,16 @@ public class ConfigFile extends FileYaml {
 
     @Override
     public void loadData() {
-        loadConfig();
         HeatMap.height = fileYaml.getInt("height");
         HeatMap.width = fileYaml.getInt("width");
+        HeatMap.path = fileYaml.getString("path");
     }
 
     @Override
     public void saveData() {
         fileYaml.set("height", HeatMap.height);
         fileYaml.set("width", HeatMap.width);
+        fileYaml.set("path", HeatMap.path);
         saveConfig();
     }
 }

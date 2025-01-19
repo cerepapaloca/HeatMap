@@ -34,6 +34,7 @@ public final class HeatMap extends JavaPlugin {
     private static HeatMap instance;
     public static int width;
     public static int height;
+    public static String path;
     public static ChunkData[][] matrixMap;
     private static CommandHandler commandHandler;
     @Getter
@@ -136,7 +137,7 @@ public final class HeatMap extends JavaPlugin {
                 }
             }
             g.dispose();
-            ImageIO.write(image, "png", new File("C:/Users/Cagut/Desktop/hotmap.png"));
+            ImageIO.write(image, "png", new File(path + File.separator +  "heatmap.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

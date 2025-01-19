@@ -11,9 +11,9 @@ import java.util.List;
 
 public class CreateImageCommand extends BaseTabCommand {
     public CreateImageCommand() {
-        super("hotmap",
+        super("heatmap",
                 "/createImage",
-                "hotmap.command.createimage",
+                "heatmap.command.createimage",
                 "Creas la imagen con el mapa de calor");
     }
 
