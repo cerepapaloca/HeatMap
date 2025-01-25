@@ -1,7 +1,6 @@
 package hm.ceres.yaml;
 
 import hm.ceres.HeatMap;
-import org.bukkit.Bukkit;
 
 public class ConfigFile extends FileYaml {
     public ConfigFile() {

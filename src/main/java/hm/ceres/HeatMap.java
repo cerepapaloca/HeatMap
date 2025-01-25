@@ -24,7 +24,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -43,6 +46,7 @@ public final class HeatMap extends JavaPlugin {
     public static ConfigFile config;
     private Thread workerThread;
     private static final BlockingQueue<Runnable> TASK_QUEUE = new LinkedBlockingQueue<>();
+    private static final HashSet<UUID> AKF_PLAYERS = new HashSet<>();
 
 
 
@@ -68,13 +72,14 @@ public final class HeatMap extends JavaPlugin {
             public void run() {
                 if (!running) return;
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (PlayerListener.AFK_PLAYERS.contains(player.getUniqueId())) continue;
                     ChunkData data = getChunkData(player.getLocation());
                     if (data != null) {
                         data.addActivityPlayer();
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(this, 0L, 40L);
+        }.runTaskTimerAsynchronously(this, 0L, 20L*2);
         new BukkitRunnable() {
             @Override
             public void run() {
