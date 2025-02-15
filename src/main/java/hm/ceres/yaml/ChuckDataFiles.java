@@ -7,6 +7,9 @@ public class ChuckDataFiles extends FilesYams {
         super("cacheMap", ChunkDataFile.class);
     }
 
+
+    final
+
     public void saveData(){
         for (int x = 0; x < HeatMap.matrixMap.length ; x++){
             for (int z = 0; z < HeatMap.matrixMap[x].length ; z++){
@@ -18,6 +21,7 @@ public class ChuckDataFiles extends FilesYams {
                 }
             }
         }
+        HeatMap.getChuckDataFiles().configFiles.forEach(FileYaml::saveConfig);
     }
 
     public void loadData(){

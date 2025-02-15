@@ -1,5 +1,6 @@
 package hm.ceres.command;
 
+import hm.ceres.HeatMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -10,13 +11,19 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Getter
-@RequiredArgsConstructor
 public abstract class BaseTabCommand {
 
     private final String name;
     private final String usage;
     private final String permissions;
     private final String description;
+
+    public BaseTabCommand(String name, String usage, String description) {
+        this.name = name;
+        this.usage = usage;
+        this.description = description;
+        this.permissions = HeatMap.getInstance().getName().toLowerCase() + ".command." + name.toLowerCase();
+    }
 
     public abstract void execute(CommandSender sender, String[] args);
 

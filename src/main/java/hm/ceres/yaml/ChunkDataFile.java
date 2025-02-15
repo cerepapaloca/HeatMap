@@ -44,6 +44,5 @@ public class ChunkDataFile extends FileYaml {
         fileYaml.set(path + "activity-player", data.getActivityPlayer());
         fileYaml.set(path + "place-block", data.getPlaceBlock());
         fileYaml.set(path + "break-block", data.getBreakBlock());
-        saveConfig();
     }
 }

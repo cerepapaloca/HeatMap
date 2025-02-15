@@ -9,11 +9,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
-public class CreateImageCommand extends BaseTabCommand {
-    public CreateImageCommand() {
+public class HeatMapCommand extends BaseTabCommand {
+    public HeatMapCommand() {
         super("heatmap",
                 "/createImage",
-                "heatmap.command.createimage",
                 "Creas la imagen con el mapa de calor");
     }
 

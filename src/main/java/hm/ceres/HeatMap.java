@@ -2,7 +2,7 @@ package hm.ceres;
 
 import hm.ceres.command.BaseTabCommand;
 import hm.ceres.command.CommandHandler;
-import hm.ceres.command.commands.CreateImageCommand;
+import hm.ceres.command.commands.HeatMapCommand;
 import hm.ceres.listener.PlayerListener;
 import hm.ceres.yaml.ChuckDataFiles;
 import hm.ceres.yaml.ConfigFile;
@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -60,7 +59,7 @@ public final class HeatMap extends JavaPlugin {
         config = new ConfigFile();
         matrixMap = new ChunkData[width][height];
         commandHandler = new CommandHandler();
-        register(new CreateImageCommand());
+        register(new HeatMapCommand());
         chuckDataFiles = new ChuckDataFiles();
         chuckDataFiles.loadData();
         register(new PlayerListener());
@@ -193,9 +192,9 @@ public final class HeatMap extends JavaPlugin {
         }
     }
 
-    public void enqueueTaskAsynchronously(Runnable task) {
+    public static void enqueueTaskAsynchronously(Runnable task) {
         if (!TASK_QUEUE.offer(task)){
-            getLogger().severe("Error al añadir la tarea");
+            getInstance().getLogger().severe("Error al añadir la tarea");
         }
     }
 
