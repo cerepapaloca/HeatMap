@@ -2,10 +2,10 @@ package hm.ceres.command.commands;
 
 import hm.ceres.HeatMap;
 import hm.ceres.ModeColor;
-import hm.ceres.command.BaseTabCommand;
 import hm.ceres.ModeMap;
+import hm.ceres.command.BaseTabCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -19,32 +19,29 @@ public class HeatMapCommand extends BaseTabCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         switch (args[0].toLowerCase()){
-            case "create" -> new BukkitRunnable() {
-                @Override
-                public void run() {
-                    ModeMap modeMap;
-                    ModeColor modeColor;
-                    try {
-                        modeMap = ModeMap.valueOf(args[1].toUpperCase());
-                    }catch (Exception e){
-                        sender.sendMessage("modo del mapa invalido");
-                        return;
-                    }
-                    try {
-                        modeColor = ModeColor.valueOf(args[2].toUpperCase());
-                    }catch (Exception e){
-                        sender.sendMessage("modo del color invalido");
-                        return;
-                    }
-
-                    try {
-                        HeatMap.CreateImage(modeMap, modeColor);
-                        sender.sendMessage("Fue creado con exitosamente");
-                    }catch (Exception e){
-                        throw new RuntimeException(e);
-                    }
+            case "create" -> Bukkit.getAsyncScheduler().runNow(HeatMap.getInstance(), task -> {
+                ModeMap modeMap;
+                ModeColor modeColor;
+                try {
+                    modeMap = ModeMap.valueOf(args[1].toUpperCase());
+                }catch (Exception e){
+                    sender.sendMessage("modo del mapa invalido");
+                    return;
                 }
-            }.runTaskAsynchronously(HeatMap.getInstance());
+                try {
+                    modeColor = ModeColor.valueOf(args[2].toUpperCase());
+                }catch (Exception e){
+                    sender.sendMessage("modo del color invalido");
+                    return;
+                }
+
+                try {
+                    HeatMap.CreateImage(modeMap, modeColor);
+                    sender.sendMessage("Fue creado con exitosamente");
+                }catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+            });
             case "stop" -> {
                 if (!HeatMap.running){
                     sender.sendMessage("Ya estaba detenido");

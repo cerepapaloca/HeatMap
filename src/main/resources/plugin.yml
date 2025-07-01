@@ -6,5 +6,6 @@ prefix: HM
 load: STARTUP
 authors: [ Ceres ]
 description: Crea un mapa de calor
+folia-supported: true
 commands:
   heatmap:

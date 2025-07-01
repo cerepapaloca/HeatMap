@@ -15,7 +15,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +28,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public final class HeatMap extends JavaPlugin {
 
@@ -66,25 +66,17 @@ public final class HeatMap extends JavaPlugin {
         workerThread = new Thread(this::processQueue);
         workerThread.setName("HotMap");
         workerThread.start();
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!running) return;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (PlayerListener.AFK_PLAYERS.contains(player.getUniqueId())) continue;
-                    ChunkData data = getChunkData(player.getLocation());
-                    if (data != null) {
-                        data.addActivityPlayer();
-                    }
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> {
+            if (!running) return;
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (PlayerListener.AFK_PLAYERS.contains(player.getUniqueId())) continue;
+                ChunkData data = getChunkData(player.getLocation());
+                if (data != null) {
+                    data.addActivityPlayer();
                 }
             }
-        }.runTaskTimerAsynchronously(this, 0L, 20L*2);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                chuckDataFiles.saveData();
-            }
-        }.runTaskTimerAsynchronously(this, 20L*60*5L, 20L*60*5);
+        }, 0L, 2, TimeUnit.SECONDS);
+        Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> chuckDataFiles.saveData(), 60*5L, 60*5, TimeUnit.SECONDS);
     }
 
     @Override
